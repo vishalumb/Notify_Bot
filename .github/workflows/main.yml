@@ -1,0 +1,41 @@
+name: Notify Bot
+
+on:
+  schedule:
+    - cron: '0 6 * * *'   # 6:00 AM
+    - cron: '0 18 * * *'  # 6:00 PM
+    - cron: '0 9 * * *'   # 9:00 AM
+    - cron: '0 21 * * *'  # 9:00 PM
+    - cron: '0 12 * * *'  # 12:00 PM (noon)
+    - cron: '0 0 * * *'   # 12:00 AM (midnight)
+    - cron: '0 3 * * *'   # 3:00 AM
+    - cron: '0 15 * * *'  # 3:00 PM
+  workflow_dispatch:  
+
+jobs:
+  execute_code:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+
+      - name: Install Dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Execute Python script
+        env:
+          SENDER_MAIL: ${{ secrets.SENDER_MAIL }}
+          SENDER_PASS: ${{ secrets.SENDER_PASS }}
+          RECEIVER_MAIL: ${{ secrets.RECEIVER_MAIL }}
+          SECRETKEY: ${{ secrets.SECRETKEY }}
+          APIKEY: ${{ secrets.APIKEY }}
+        run: |
+          python script.py
